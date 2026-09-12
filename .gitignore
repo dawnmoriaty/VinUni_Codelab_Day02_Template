@@ -1,3 +1,4 @@
 .venv/
 .env
 __pycache__/
+starter-code/prompt_prototype.py

@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Xanh SM — AI Agent as Enterprise Integration & Semantic Adapter",
+    "output": "xanhsm-agent-adapter.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "ingress-path",
+        "label": "Ingress & Normalization",
+        "focus": ["driver_app", "dispatcher_ui", "api_gateway", "agent_adapter"],
+        "note": "Driver report and Dispatcher inputs arrive via API Gateway, normalized by AI Semantic Adapter."
+      },
+      {
+        "id": "adapter-integration",
+        "label": "ERP & CRM Integration",
+        "focus": ["agent_adapter", "redis_lock", "crm_hub", "erp_sap"],
+        "note": "The AI Agent bridges CRM driver tickets with ERP asset dispatch and cost accounting."
+      },
+      {
+        "id": "telematics-and-csms",
+        "label": "IoT Telematics & Charging Grid",
+        "focus": ["agent_adapter", "saga_engine", "telematics_iot", "csms_stations"],
+        "note": "Cross-validating CAN-bus telemetry with VinFast charging station availability."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "driver_app",
+      "type": "external",
+      "label": "Driver Mobile App",
+      "sublabel": "Incident Form & GPS",
+      "pos": [40, 230],
+      "size": [140, 60]
+    },
+    {
+      "id": "dispatcher_ui",
+      "type": "frontend",
+      "label": "Dispatcher Cockpit",
+      "sublabel": "HITL Review Console",
+      "pos": [40, 370],
+      "size": [140, 60]
+    },
+    {
+      "id": "api_gateway",
+      "type": "security",
+      "label": "Enterprise Gateway",
+      "sublabel": "OAuth2 + Rate Limiting",
+      "pos": [260, 300],
+      "size": [140, 64],
+      "tag": "Zero Trust"
+    },
+    {
+      "id": "agent_adapter",
+      "type": "backend",
+      "label": "AI Semantic Adapter",
+      "sublabel": "Gemini 3.6 + Schema Normalizer",
+      "pos": [480, 300],
+      "size": [170, 64],
+      "tag": "Core Broker"
+    },
+    {
+      "id": "redis_lock",
+      "type": "database",
+      "label": "State & Deduplication",
+      "sublabel": "Redis Cluster :6379",
+      "pos": [480, 140],
+      "size": [170, 60],
+      "tag": "Idempotency"
+    },
+    {
+      "id": "saga_engine",
+      "type": "messagebus",
+      "label": "Saga Orchestrator",
+      "sublabel": "Transactional Sync & Rollback",
+      "pos": [480, 460],
+      "size": [170, 60],
+      "tag": "Compensating"
+    },
+    {
+      "id": "crm_hub",
+      "type": "backend",
+      "label": "CRM Platform",
+      "sublabel": "Driver Profile & SLA Ticket",
+      "pos": [840, 90],
+      "size": [160, 60],
+      "tag": "Customer Hub"
+    },
+    {
+      "id": "erp_sap",
+      "type": "backend",
+      "label": "ERP S/4HANA",
+      "sublabel": "Rescue Van Assets & Cost",
+      "pos": [840, 230],
+      "size": [160, 60],
+      "tag": "Finance & Asset"
+    },
+    {
+      "id": "telematics_iot",
+      "type": "cloud",
+      "label": "Connected Car IoT",
+      "sublabel": "CAN Bus, SOC & Cell Temp",
+      "pos": [840, 370],
+      "size": [160, 60],
+      "tag": "Real-time MQTT"
+    },
+    {
+      "id": "csms_stations",
+      "type": "cloud",
+      "label": "VinFast CSMS Grid",
+      "sublabel": "OCPP Live Charging Slots",
+      "pos": [840, 510],
+      "size": [160, 60],
+      "tag": "Charging Network"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Intelligent Integration Layer (Adapter & Orchestrator)",
+      "wraps": ["api_gateway", "agent_adapter", "redis_lock", "saga_engine"]
+    },
+    {
+      "kind": "region",
+      "label": "Enterprise Back-Office & Infrastructure",
+      "wraps": ["crm_hub", "erp_sap", "telematics_iot", "csms_stations"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "driver-to-gw",
+      "from": "driver_app",
+      "to": "api_gateway",
+      "label": "HTTPS REST"
+    },
+    {
+      "id": "dispatcher-to-gw",
+      "from": "dispatcher_ui",
+      "to": "api_gateway",
+      "label": "WSS"
+    },
+    {
+      "id": "gw-to-adapter",
+      "from": "api_gateway",
+      "to": "agent_adapter",
+      "label": "gRPC",
+      "variant": "emphasis"
+    },
+    {
+      "id": "adapter-to-redis",
+      "from": "agent_adapter",
+      "to": "redis_lock",
+      "label": "dedup lock",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "adapter-to-saga",
+      "from": "agent_adapter",
+      "to": "saga_engine",
+      "label": "emit event",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelDy": 24
+    },
+    {
+      "id": "adapter-to-crm",
+      "from": "agent_adapter",
+      "to": "crm_hub",
+      "label": "REST: Ticket"
+    },
+    {
+      "id": "adapter-to-erp",
+      "from": "agent_adapter",
+      "to": "erp_sap",
+      "label": "OData: Order",
+      "variant": "emphasis",
+      "labelDx": 40
+    },
+    {
+      "id": "adapter-to-iot",
+      "from": "agent_adapter",
+      "to": "telematics_iot",
+      "label": "MQTT: SOC",
+      "labelDx": 40
+    },
+    {
+      "id": "adapter-to-csms",
+      "from": "agent_adapter",
+      "to": "csms_stations",
+      "label": "OCPP: Slot"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Data Silos & Pain Points",
+      "items": [
+        "Manual Cross-System MTTR: 15 minutes before AI",
+        "CRM & ERP Data Mismatch: 14.5% error rate from re-typing",
+        "Blind Dispatch Waste: 5 false rescue calls/day costing 2.5M VND"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Agent as Integration Adapter",
+      "items": [
+        "Ingests Unstructured Form + Stream Telemetry",
+        "Schema Transformation & Reconciliation into Canonical Model",
+        "Two-way Write-back: Auto-ticket in CRM + Work Order in ERP"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Business KPIs Achieved",
+      "items": [
+        "MTTR reduced 81.3%: from 15 min down to 2.8 min",
+        "Data Mismatch eliminated: < 0.05% error rate",
+        "Net Operational Savings: 263M VND/month for Hanoi fleet"
+      ]
+    }
+  ]
+}

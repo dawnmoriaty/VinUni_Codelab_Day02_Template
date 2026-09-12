@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <style>
+    .box { fill: #f7f9fc; stroke: #26364a; stroke-width: 2; }
+    .ai { fill: #dceeff; stroke: #1769aa; stroke-width: 2; }
+    .human { fill: #e2f5e9; stroke: #287a45; stroke-width: 2; }
+    .fallback { fill: #fff0d9; stroke: #b56700; stroke-width: 2; }
+    .title { font: bold 22px sans-serif; fill: #17212b; }
+    .text { font: 16px sans-serif; fill: #17212b; text-anchor: middle; }
+    .small { font: 14px sans-serif; fill: #17212b; text-anchor: middle; }
+    .arrow { stroke: #526579; stroke-width: 3; marker-end: url(#arrow); fill: none; }
+  </style>
+  <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L10,3 L0,6 Z" fill="#526579"/></marker></defs>
+  <text x="600" y="38" class="title" text-anchor="middle">Vinhomes Resident Issue Triage - Future State</text>
+  <rect x="35" y="100" width="180" height="105" rx="8" class="box"/><text x="125" y="135" class="text"><tspan x="125">Cư dân gửi</tspan><tspan x="125" dy="25">phản ánh</tspan><tspan x="125" dy="24" class="small">Input + ảnh</tspan></text>
+  <rect x="260" y="100" width="200" height="105" rx="8" class="box"/><text x="360" y="135" class="text"><tspan x="360">Rule kiểm tra</tspan><tspan x="360" dy="25">bắt buộc/khẩn</tspan><tspan x="360" dy="24" class="small">Handoff: tổng đài</tspan></text>
+  <rect x="505" y="100" width="205" height="105" rx="8" class="ai"/><text x="607" y="135" class="text"><tspan x="607">AI: trích xuất</tspan><tspan x="607" dy="25">JSON có cấu trúc</tspan><tspan x="607" dy="24" class="small">LLM Feature</tspan></text>
+  <rect x="755" y="100" width="190" height="105" rx="8" class="box"/><text x="850" y="135" class="text"><tspan x="850">Validate schema</tspan><tspan x="850" dy="25">+ confidence</tspan><tspan x="850" dy="24" class="small">Ngưỡng 0.85</tspan></text>
+  <rect x="990" y="100" width="175" height="105" rx="8" class="human"/><text x="1077" y="135" class="text"><tspan x="1077">HITL duyệt</tspan><tspan x="1077" dy="25">và chỉnh draft</tspan><tspan x="1077" dy="24" class="small">Không tự gửi</tspan></text>
+  <path d="M215 152 H260 M460 152 H505 M710 152 H755 M945 152 H990" class="arrow"/>
+  <rect x="430" y="330" width="245" height="110" rx="8" class="fallback"/><text x="552" y="365" class="text"><tspan x="552">Fallback thủ công</tspan><tspan x="552" dy="25">confidence thấp, lỗi API</tspan><tspan x="552" dy="24" class="small">Không tự route</tspan></text>
+  <rect x="780" y="330" width="245" height="110" rx="8" class="human"/><text x="902" y="365" class="text"><tspan x="902">Tạo ticket</tspan><tspan x="902" dy="25">và gửi trạng thái</tspan><tspan x="902" dy="24" class="small">Sau khi người duyệt</tspan></text>
+  <path d="M850 205 V275 H552 V330" class="arrow"/>
+  <path d="M850 205 V330" class="arrow"/>
+  <path d="M1077 205 V275 H902 V330" class="arrow"/>
+  <text x="760" y="270" class="small">Không đạt ngưỡng</text>
+  <text x="600" y="500" class="small">Bottleneck hiện tại: đọc, phân loại và nhập phiếu 8-12 phút/yêu cầu</text>
+  <text x="600" y="530" class="small">Mọi hành động có ảnh hưởng đến cư dân đều cần human-in-the-loop</text>
+</svg>
